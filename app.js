@@ -7,10 +7,10 @@ app.use(express.json());
 //reading files from data.JSON file
 const tours = JSON.parse(
     fs.readFileSync(`${__dirname}/devdata/data/tours-simple.json`)
-); 
+);
 
-//get req
-app.get('/api/v1/tours', (req, res) => {
+//handler functions
+const getAllTours = (req, res) => {
     res.status(200).json({
         status: 'success',
         results: tours.length,
@@ -18,22 +18,24 @@ app.get('/api/v1/tours', (req, res) => {
             tours
         }
     });
-});
-
-//get id req
-app.get('/api/v1/tours/:id', (req, res) => {
+}
+const getTourById = (req, res) => {
     const id = req.params.id * 1;
     const tour = tours.find(ele => ele.id === id);
+    if(!tour) {
+        return res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID'
+        });
+    }
     res.status(200).json({
         status: 'success', 
         data: {
             tour
         }
     });
-});
-
-//post req
-app.post('/api/v1/tours', (req,res) => {
+}
+const cretaeTour = (req,res) => {
     const newId = tours[tours.length-1].id+1;
     const newTour = Object.assign({id: newId}, req.body);
     tours.push(newTour);
@@ -45,7 +47,53 @@ app.post('/api/v1/tours', (req,res) => {
             }
         });
     });
-});
+}
+const updateTour = (req, res) => {
+    if(req.params.id * 1 > tours.length) {
+        res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID'
+        });
+    }
+    res.status(200).json({
+        status: 'success',
+        data: {
+            tour: '<Updated tour here..>'
+        }
+    });
+}
+const deleteTour = (req, res) => {
+    if(req.params.id * 1 > tours.length) {
+        res.status(404).json({
+            status: 'Fail',
+            message: 'Invalid ID'
+        });
+    }
+    res.status(204).json({
+        status: 'success',
+        data: null
+    });
+}
+
+//get
+// app.get('/api/v1/tours', getAllTours);
+
+//get by id
+app.get('/api/v1/tours/:id', getTourById);
+
+//post or cretae tour
+// app.post('/api/v1/tours', cretaeTour);
+
+//patch or update by id
+app.patch('/api/v1/tours/:id', updateTour);
+
+// delete by id
+app.delete('/api/v1/tours/:id', deleteTour);
+
+//setting route
+app.route('/api/v1/tours')
+    .get(getAllTours)
+    .post(cretaeTour);
 
 //connection portal
 const port = 3000;
