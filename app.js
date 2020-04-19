@@ -150,36 +150,26 @@ const deleteUser = (req, res) => {
     });
 }
 
-//get
-// app.get('/api/v1/tours', getAllTours);
-
-//get by id
-// app.get('/api/v1/tours/:id', getTourById);
-
-//post or cretae tour
-// app.post('/api/v1/tours', cretaeTour);
-
-//patch or update by id
-// app.patch('/api/v1/tours/:id', updateTour);
-
-// delete by id
-// app.delete('/api/v1/tours/:id', deleteTour);
-
 //setting route for CRUD
-app.route('/api/v1/tours') //for tours
-    .get(getAllTours)
-    .post(cretaeTour);
-app.route('/api/v1/tours/:id') //for tour by id
-    .get(getTourById)
-    .patch(updateTour)
-    .delete(deleteTour);
-app.route('/api/v1/users') // for users
-    .get(getAllUsers)
-    .post(createUser);
-app.route('/api/v1/users/:id') // for user by id
-    .get(getUserById)
-    .patch(updateUser)
-    .delete(deleteUser);
+const tourRoute = express.Router();
+app.use('/api/v1/tours', tourRoute);
+tourRoute.route('/') //for tours
+         .get(getAllTours)
+         .post(cretaeTour);
+tourRoute.route('/:id') //for tour by id
+         .get(getTourById)
+         .patch(updateTour)
+         .delete(deleteTour);
+
+const userRoute = express.Router();
+app.use('/api/v1/users', userRoute);
+userRoute.route('/') // for users
+         .get(getAllUsers)
+         .post(createUser);
+userRoute.route('/:id') // for user by id
+         .get(getUserById)
+         .patch(updateUser)
+         .delete(deleteUser);
 
 //connection portal
 const port = 3000;
