@@ -17,7 +17,7 @@ mongoose.connect(DB, {
 });
 
 //mongoose schema
-const tourSchema = mongoose.Schema({
+const tourSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'A tour must have a name'],
@@ -35,6 +35,17 @@ const tourSchema = mongoose.Schema({
 
 //Models
 const Tour = mongoose.model('Tour', tourSchema);
+
+//instance of Tour Model
+const testTour = new Tour({
+    name: "The Park Camper",
+    price: 997
+})
+testTour.save().then(doc => {
+    console.log(doc);
+}).catch(err => {
+    console.log('ERROR :', err )
+})
 
 //connecting server
 const port = process.env.PORT || 3000;
