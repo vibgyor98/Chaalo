@@ -1,6 +1,7 @@
+*.gitignore
 /node_modules
-/package-lock.json
-/package.json
-/config.env
+*package-lock.json
+*package.json
+*config.env
 /Thumbs.db
 /public
