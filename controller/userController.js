@@ -52,7 +52,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
   //send the updated document
   res.status(200).json({
-    status: 'Success',
+    status: 'success',
     data: {
       user: updatedUser,
     },

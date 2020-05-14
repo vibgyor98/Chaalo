@@ -5,3 +5,6 @@
 *config.env
 /Thumbs.db
 /public
+*.cache
+*bundle.js.map
+*bundle.js

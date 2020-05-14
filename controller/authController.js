@@ -29,7 +29,7 @@ const createSendToken = (user, statusCode, res) => {
   user.password = undefined;
   //send the response
   res.status(statusCode).json({
-    status: 'Success',
+    status: 'success',
     token,
     data: {
       user,
@@ -69,6 +69,17 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+//Logout User
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    status: 'success',
+  });
+};
+
 //protect and handle Async middleware
 exports.protect = catchAsync(async (req, res, next) => {
   //Get the token and check if it is exist
@@ -78,6 +89,8 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
   //if no token available
   if (!token) {
@@ -99,8 +112,38 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   //grant access to the protected route
   req.user = existUser;
+  res.locals.user = existUser;
   next();
 });
+
+//For Rendered pages, no errors
+exports.isLoggedIn = async (req, res, next) => {
+  if (req.cookies.jwt) {
+    try {
+      //verify token
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
+
+      //if user exist
+      const existUser = await User.findById(decoded.id);
+      if (!existUser) {
+        return next();
+      }
+      //if user changed password after log in
+      if (existUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+      //there is a logged in user
+      res.locals.user = existUser;
+      return next();
+    } catch (err) {
+      return next();
+    }
+  }
+  next();
+};
 
 //Restrict
 exports.restrictTo = (...roles) => {
@@ -138,7 +181,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message,
     });
     res.status(200).json({
-      status: 'Success',
+      status: 'success',
       message: 'Token sent to email!',
     });
   } catch (err) {
