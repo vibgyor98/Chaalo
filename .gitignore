@@ -1,10 +1,10 @@
 *.gitignore
 node_modules/
 *package-lock.json
-*config.env
+*.env
 /Thumbs.db
-public/
 *.cache
 *bundle.js.map
 *bundle.js
 devdata/
+*.html
