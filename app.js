@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controller/errorController');
@@ -68,6 +69,9 @@ app.use(
     ],
   })
 );
+
+//Compressing responses
+app.use(compression());
 
 //Mounting Routers
 //API routes

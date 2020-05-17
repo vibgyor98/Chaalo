@@ -14,7 +14,7 @@ class APIFeatures {
     //Advanced filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); //regular expression
-    console.log(JSON.parse(queryStr));
+    // console.log(JSON.parse(queryStr));
 
     //identifying particular filter query
     // let query = Tour.find(JSON.parse(queryStr));
